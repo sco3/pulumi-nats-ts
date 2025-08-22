@@ -26,7 +26,7 @@ const getRoutes = (replicas: number, currentIndex: number) => {
             routes.push(`nats://${appName}-${i}:6222`);
         }
     }
-    return ["--routes", routes.join(",")];
+    return routes;
 };
 
 // Create NATS servers in a loop.
@@ -34,12 +34,21 @@ const natsContainers = Array.from({ length: numReplicas }, (_, i) => {
     // Dynamically determine the command for each node.
     const command = [
         "nats-server",
+        "--name",
+        `${appName}-${i}`,
         "-js", // Enable JetStream
+        "--store_dir",
+        "/data/jetstream",
     ];
 
     // Add clustering flags and routes if there is more than one node.
     if (numReplicas > 1) {
-        command.push("--cluster", `nats://${appName}-${i}:6222`, ...getRoutes(numReplicas, i));
+        command.push("--cluster", "nats://0.0.0.0:6222");
+        command.push("--cluster_name", "test-nats-cluster");
+        const routes = getRoutes(numReplicas, i);
+        if (routes.length > 0) {
+            command.push("--routes", routes.join(","));
+        }
     }
 
     return new docker.Container(`${appName}-${i}`, {
@@ -52,10 +61,16 @@ const natsContainers = Array.from({ length: numReplicas }, (_, i) => {
             },
         ],
         command: command,
-        ports: i === 0 ? [
-            { internal: 4222, external: 4222 }, // Client port (only for the first node)
-            { internal: 8222, external: 8222 }, // Monitoring port (only for the first node)
-        ] : [],
+        volumes: [
+            {
+                hostPath: `${process.cwd()}/nats-data/${i}`,
+                containerPath: "/data",
+            },
+        ],
+        ports: [
+            { internal: 4222, external: 4222 + i }, // Client port
+            { internal: 8222, external: 8222 + i }, // Monitoring port
+        ],
     });
 });
 
