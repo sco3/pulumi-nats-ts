@@ -1,11 +1,12 @@
 {
-    "name": "nats-pulumi-docker",
+    "name": "pulumi-nats",
     "main": "index.ts",
     "devDependencies": {
-        "@types/node": "^16.0.0"
+        "@types/node": "^18",
+        "typescript": "^5.0.0"
     },
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/pulumi": "^3.113.0",
         "@pulumi/docker": "^4.0.0"
     }
 }

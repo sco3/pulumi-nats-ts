@@ -9,3 +9,6 @@ ln -sf ~/.pulumi/bin/pulumi ~/bin/
 
 pulumi version
 pulumi login -l
+
+
+echo was created with pulumi new typescript
