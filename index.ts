@@ -1,7 +1,4 @@
-import { numReplicas } from "./config";
-import { createNatsContainer } from "./container";
+import { createNatsContainers } from "./containers";
 
-const natsContainers = Array.from({ length: numReplicas }, (_, i) => createNatsContainer(i));
-
-// Export container names.
-export const containerNames = natsContainers.map(c => c.name);
+// Create and export container names
+export const containerNames = createNatsContainers();
