@@ -1,17 +1,21 @@
 import { appName } from "./config";
 
-// Define the routes for the NATS cluster.
-// This function is called only if there is more than one node.
-export const getRoutes = (replicas: number, currentIndex: number) => {
-    if (replicas <= 1) {
-        return [];
-    }
+const ROUTE_PORT = 6222;
 
+/**
+ * Generates NATS cluster routes for all replicas except the current one.
+ * @param totalReplicas - Total number of replicas in the cluster
+ * @param currentReplicaIndex - Index of the current replica (0-based)
+ * @returns Array of NATS route URLs for other replicas
+ */
+export function getRoutes(totalReplicas: number, currentReplicaIndex: number): string[] {
     const routes: string[] = [];
-    for (let i = 0; i < replicas; i++) {
-        if (i !== currentIndex) {
-            routes.push(`nats://${appName}-${i}:6222`);
+    
+    for (let i = 0; i < totalReplicas; i++) {
+        if (i !== currentReplicaIndex) {
+            routes.push(`nats://${appName}-${i}:${ROUTE_PORT}`);
         }
     }
+    
     return routes;
-};
+}
