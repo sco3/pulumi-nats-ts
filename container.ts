@@ -3,8 +3,7 @@ import { numReplicas, appName, natsImage } from "./config";
 import { natsNetwork } from "./network";
 import { getRoutes } from "./routes";
 
-// Create NATS servers in a loop.
-export const natsContainers = Array.from({ length: numReplicas }, (_, i) => {
+export function createNatsContainer(i: number) {
     // Dynamically determine the command for each node.
     const command = [
         "nats-server",
@@ -46,4 +45,4 @@ export const natsContainers = Array.from({ length: numReplicas }, (_, i) => {
             { internal: 8222, external: 8222 + i }, // Monitoring port
         ],
     });
-});
+}
