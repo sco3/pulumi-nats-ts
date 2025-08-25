@@ -1,4 +1,4 @@
-import { createNatsContainers } from "./container";
+import { createNatsContainers } from "./containers";
 
 const natsContainers = createNatsContainers();
 
