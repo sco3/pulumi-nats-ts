@@ -2,3 +2,4 @@
 /node_modules/
 nats-data/
 nats-config
+.project
