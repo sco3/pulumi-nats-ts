@@ -11,11 +11,11 @@ function writeFileWithDirs(filePath: string, content: string): void {
     writeFileSync(filePath, content);
 }
 
-export function createNatsContainer(i: number) {
+export function createNatsContainer(i: number, user: string) {
     // Create a config file for the NATS server
     const configContent = generateNatsConfig(i, numReplicas);
-    
-    
+
+
     const configPath = join(process.cwd(), 'nats-config', i.toString(), 'nats.conf');
     writeFileWithDirs(configPath, configContent);
     const containerName = `${appName}-${i}`
@@ -42,5 +42,6 @@ export function createNatsContainer(i: number) {
             { internal: 4222, external: 4222 + i },
             { internal: 8222, external: 8222 + i },
         ],
+        user,
     });
 }

@@ -11,7 +11,7 @@ export function createNatsContainers(): pulumi.Output<string[]> {
     const containerNames: pulumi.Output<string>[] = [];
     
     for (let i = 0; i < numReplicas; i++) {
-        const container = createNatsContainer(i);
+        const container = createNatsContainer(i, "1000");
         containerNames.push(container.name);
     }
     
