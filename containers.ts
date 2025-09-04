@@ -8,12 +8,12 @@ import { createNatsContainer } from "./container";
  * @returns A Pulumi Output containing an array of container names
  */
 export function createNatsContainers(): pulumi.Output<string[]> {
-    const containerNames: pulumi.Output<string>[] = [];
-    
-    for (let i = 0; i < numReplicas; i++) {
-        const container = createNatsContainer(i);
-        containerNames.push(container.name);
-    }
-    
-    return pulumi.all(containerNames);
+  const containerNames: pulumi.Output<string>[] = [];
+
+  for (let i = 0; i < numReplicas; i++) {
+    const container = createNatsContainer(i, "1000");
+    containerNames.push(container.name);
+  }
+
+  return pulumi.all(containerNames);
 }

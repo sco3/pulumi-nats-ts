@@ -23,5 +23,3 @@ Stop:
 ```
 pulumi down --yes
 ```
-
-
