@@ -9,48 +9,51 @@ import { getRoutes } from "./routes";
  */
 
 export function generateNatsConfig(i: number, numReplicas: number): string {
-    const config: any = {
+  const config: any = {
+    listen: "0.0.0.0:4222",
+    http: "0.0.0.0:8222",
+    server_name: `${appName}-${i}`,
 
-        listen: "0.0.0.0:4222",
-        http: "0.0.0.0:8222",
-        server_name: `${appName}-${i}`,
+    jetstream: {
+      // sync_interval: "always",
+      store_dir: "/data/jetstream",
+    },
 
-        jetstream: {
-            // sync_interval: "always",            
-            store_dir: "/data/jetstream"
-        },
-
-        cluster: numReplicas > 1 ? {
+    cluster:
+      numReplicas > 1
+        ? {
             name: "test-nats-cluster",
             listen: "0.0.0.0:6222",
-            routes: getRoutes(numReplicas, i)
-        } : undefined
+            routes: getRoutes(numReplicas, i),
+          }
+        : undefined,
+  };
 
-    };
-
-    if (Object.keys(natsConfig).length > 0) {
-        config.accounts = {};
-        if (natsConfig.cluster) {
-            config.accounts.USERS = {
-                jetstream: "enabled",
-                users: [
-                    {
-                        user: natsConfig.cluster.username,
-                        password: natsConfig.cluster.password
-                    }
-                ]
-            };
-        }
-        if (natsConfig.admin) {
-            config.accounts.SYS = {
-                users: [{
-                    user: natsConfig.admin.username,
-                    password: natsConfig.admin.password
-                }]
-            };
-            config.system_account = "SYS";
-        }
+  if (Object.keys(natsConfig).length > 0) {
+    config.accounts = {};
+    if (natsConfig.cluster) {
+      config.accounts.USERS = {
+        jetstream: "enabled",
+        users: [
+          {
+            user: natsConfig.cluster.username,
+            password: natsConfig.cluster.password,
+          },
+        ],
+      };
     }
+    if (natsConfig.admin) {
+      config.accounts.SYS = {
+        users: [
+          {
+            user: natsConfig.admin.username,
+            password: natsConfig.admin.password,
+          },
+        ],
+      };
+      config.system_account = "SYS";
+    }
+  }
 
-    return JSON.stringify(config, null, 2);
+  return JSON.stringify(config, null, 2);
 }
